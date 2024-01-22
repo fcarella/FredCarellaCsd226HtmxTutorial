@@ -26,11 +26,34 @@ public class GreetController {
         return "Hello " + values.getValue() + "!";
     }
 
-    @GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Rendering> stream() {
+    @GetMapping(path = "/stream2", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Rendering> stream2() {
         return Flux.interval(Duration.ofSeconds(5)).map(value -> Rendering.view("time")
                 .modelAttribute("value", value)
                 .modelAttribute("time", System.currentTimeMillis()).build());
+    }
+
+
+    @GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> stream() {
+        return Flux.interval(Duration.ofSeconds(5)).map(
+                value -> value + ":" + System.currentTimeMillis()
+        );
+    }
+
+
+    @GetMapping(path = "/test")
+    public String test() {
+        return "<div id=\"hello\" hx-swap-oob=\"true\">Hello</div>\n"
+                + "<div id=\"world\" hx-swap-oob=\"true\">World</div>";
+    }
+    @GetMapping(path = "/test2")
+    public Flux<Rendering> test2() {
+        return Flux.just(
+                Rendering.view("test").modelAttribute("id", "hello2")
+                        .modelAttribute("value", "Hello2").build(),
+                Rendering.view("test").modelAttribute("id", "world2")
+                        .modelAttribute("value", "World2").build());
     }
 
     static class Greeting {
